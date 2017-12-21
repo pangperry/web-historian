@@ -23,18 +23,16 @@ const actions = {
     } 
     // check archives/sites.txt
     // check web/sites.txt
-
-    archive.readListOfUrls(function(data) {
-      console.log('data', data);
-    });
+    archive.downloadUrls();
     
-    archive.isUrlInList('www.amazon.com', function(result) {
-      if (!result) {
-        addUrlToList(url, function(url) {
-          // figure this out
-          fs.writeFile(url);
-        });
-      }
+    archive.isUrlArchived('www.google.com', function(result) {
+      console.log(result);
+      // if (!result) {
+      //   archive.addUrlToList(url, function(url) {
+      //     // figure this out
+      //     fs.writeFile(url);
+      //   });
+      // }
     });
 
     if (pathname !== '/favicon.ico') {
