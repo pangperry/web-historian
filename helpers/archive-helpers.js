@@ -26,6 +26,14 @@ exports.initialize = function(pathsObj) {
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(callback) {
+  fs.readFile(exports.paths.list, 'utf-8', (err, data) => {
+    console.log('running');
+    console.log(err);
+    if (err) {
+      throw Error;
+    }
+    callback(data);
+  });
 };
 
 exports.isUrlInList = function(url, callback) {

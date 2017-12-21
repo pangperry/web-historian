@@ -10,7 +10,10 @@ exports.headers = {
   'Content-Type': 'text/html'
 };
 
+//adding a header parameter for content-type only
 exports.serveAssets = function(res, asset, callback) {
+  // console.log(asset);
+  // console.log(exports.headers);
   // console.log(asset);
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...),
@@ -20,7 +23,15 @@ exports.serveAssets = function(res, asset, callback) {
     if (err) { 
       throw err;
     }
-
+    
+    
+    
+    // if (pathname.slice(-3) === 'css') {
+    //   http.headers['Content-Type'] = 'text/css';
+    // } else {
+    //   http.headers['Content-Type'] = 'text/html';
+    // }
+ 
     if (!callback) {
       res.writeHead(200, exports.headers);
       res.end(data);
@@ -29,6 +40,8 @@ exports.serveAssets = function(res, asset, callback) {
     //note: callback must include res.writeHead and res.end
 
   });
+   
+   
   // res.writeHead(200, exports.headers);
   // res.end(asset);
 };
