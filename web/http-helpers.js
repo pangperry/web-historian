@@ -11,11 +11,32 @@ exports.headers = {
 };
 
 exports.serveAssets = function(res, asset, callback) {
+  // console.log(asset);
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...),
   // css, or anything that doesn't change often.)
+
+  fs.readFile(asset, 'utf-8', (err, data) => {
+    if (err) { 
+      throw err;
+    }
+
+    if (!callback) {
+      res.writeHead(200, exports.headers);
+      res.end(data);
+    }
+     
+    //note: callback must include res.writeHead and res.end
+
+  });
+  // res.writeHead(200, exports.headers);
+  // res.end(asset);
 };
 
+exports.send404 = (res) => {
+  res.writeHead(status, headers);
+  res.end(JSON.stringify(res));
+};
 
 
 // As you progress, keep thinking about what helper functions you can put here!
