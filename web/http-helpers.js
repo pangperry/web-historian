@@ -24,14 +24,7 @@ exports.serveAssets = function(res, asset, callback) {
       throw err;
     }
     
-    
-    
-    // if (pathname.slice(-3) === 'css') {
-    //   http.headers['Content-Type'] = 'text/css';
-    // } else {
-    //   http.headers['Content-Type'] = 'text/html';
-    // }
- 
+
     if (!callback) {
       res.writeHead(200, exports.headers);
       res.end(data);

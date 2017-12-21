@@ -27,9 +27,17 @@ const actions = {
     archive.readListOfUrls(function(data) {
       console.log('data', data);
     });
+    
+    archive.isUrlInList('www.amazon.com', function(result) {
+      if (!result) {
+        addUrlToList(url, function(url) {
+          // figure this out
+          fs.writeFile(url);
+        });
+      }
+    });
 
     if (pathname !== '/favicon.ico') {
-      // http.serveAssets(res, './public/index.html');
       http.serveAssets(res, asset);
     }
 

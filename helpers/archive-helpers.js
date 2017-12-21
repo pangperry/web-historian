@@ -27,8 +27,6 @@ exports.initialize = function(pathsObj) {
 
 exports.readListOfUrls = function(callback) {
   fs.readFile(exports.paths.list, 'utf-8', (err, data) => {
-    console.log('running');
-    console.log(err);
     if (err) {
       throw Error;
     }
@@ -37,12 +35,17 @@ exports.readListOfUrls = function(callback) {
 };
 
 exports.isUrlInList = function(url, callback) {
+  exports.readListOfUrls(function(data) {
+    callback(data.includes(url));
+  });
 };
 
 exports.addUrlToList = function(url, callback) {
+
 };
 
 exports.isUrlArchived = function(url, callback) {
+
 };
 
 exports.downloadUrls = function(urls) {
