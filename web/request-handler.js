@@ -10,8 +10,16 @@ const actions = {
     let parsedUrl = url.parse(req.url);
     let pathname = parsedUrl.pathname;
     let asset;
-
+    // archive.processList();
     // serve index.html upon get request with no parameters
+    
+    // archive.readListOfUrls(function(data) {
+    //   console.log("list of Urls: " + data);
+    // });
+    // archive.readArchive(function(data) {
+    //   console.log("list of Urls: " + data);
+    // });
+
     if (pathname === '/') {
       asset = path.join(archive.paths.siteAssets, 'index.html');
     } else if (pathname === '/styles.css') {
@@ -20,9 +28,6 @@ const actions = {
     if (pathname !== '/favicon.ico') {
       http.serveAssets(res, asset);
     }
-
-    // need GET logic for GET requests with parameters (aka sites)
-
   },
 
   'POST': (req, res) => {
@@ -31,26 +36,35 @@ const actions = {
       url.push(chunk);
     }).on('end', () => {
       url = Buffer.concat(url).toString();
-      console.log(url);
     });
-
-
-    let parsedUrl = url.parse(req.url);
-    let pathname = parsedUrl.pathname;
-    let asset;
    
-
     // catch for if POST submitted, with nothing in searchbar
-    if (pathname === undefined) {
+    if (url === undefined) {
       // actions.GET(req, res);
+    } else {
+      archive.isUrlInList(url, function(boolean) {
+        if (boolean) {
+          archive.isUrlArchived(url, function(boolean) {
+            if (boolean) {
+              console.log('should be serving ', url);
+              http.serveAssets(res, url);
+            } else {
+              url = path.join(archive.paths.siteAssets, 'loading.html');
+              http.serveAssets(res, url);
+            }
+          });
+        } else {
+          archive.addUrlToList(url, function(data) {
+            // do something?
+            console.log('url should be added to list');
+            
+          });
+          url = path.join(archive.paths.siteAssets, 'loading.html');
+          http.serveAssets(res, url);
+        }
+      });
     }
-    
-
-
-
-
   }
-  
 };
 
 exports.handleRequest = (req, res) => {

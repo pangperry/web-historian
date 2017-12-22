@@ -60,32 +60,80 @@ exports.addUrlToList = function(url, callback) {
   });
 };
 
+
+// process list
+  // isUrlInList
+   // function(boolean) {if
+
+// exports.processList = function() {
+//   exports.readListOfUrls(function(data) {
+//     data = '';
+//     res.on('data', function(chunk) {
+//       console.log('running process list');
+//       data += chunk;
+//     });
+//     res.on('end', function() {
+//       console.log('ending process list');
+//       list += data;
+//     });
+//   });
+//   // isUrlInList()
+// };
+
+
+
 exports.isUrlArchived = function(url, callback) {
   exports.readArchive(function(data) {
     callback(data.includes(url));
   });
 };
 
-exports.downloadUrls = function(urls = ['www.amazon.com']) { 
-  urls.forEach(function(site) {
-    exports.downloadUrl(site);
+// exports.downloadUrls = function(urls = ['www.amazon.com']) { 
+//   urls.forEach(function(site) {
+//     exports.downloadUrl(site);
+// //   });
+// };
+
+exports.downloadUrls = function() { 
+  let listUrls;
+  exports.readListOfUrls(function(data) {
+    console.log('data in one line 100' + data);
+    listUrls = data.split('\n');  
+    listUrls.forEach(function(url) {
+      exports.isUrlArchived(url, function(boolean) {
+        if (!boolean) {
+          exports.downloadUrl(url);
+        }
+      });
+    });
   });
 };
 
 exports.downloadUrl = function(url) {
-  let webUrl = 'http://' + url;
-  requestLib(webUrl, (error, response, body) => {
-    if (error) {
-      throw error;
+  let webUrl;
+  console.log('here is the url', url);
+  if (url !== '/' && url !== '') {
+    webUrl = 'http://' + url;
+    if (webUrl.slice(0, 4) === 'url=') {
+      webUrl = webUrl.slice(4);
     }
-    fs.writeFile(path.join(exports.paths.archivedSites, url), body, function(err) {
-      // console.log('body', body);
-      // console.log('path', path.join(exports.paths.archivedSites, url));
-      if (err) {
-        throw err;
+  } else {
+    console.log('made it');
+    console.log(webUrl);
+    // webUrl = 'http://' + url;
+  }
+  if (webUrl !== undefined && webUrl.slice(0 , 3) === 'www') {
+    requestLib(webUrl, (error, response, body) => {
+      if (error) {
+        throw error;
       }
+      fs.writeFile(path.join(exports.paths.archivedSites, url), body, function(err) {
+        if (err) {
+          throw err;
+        }
+      });
     });
-  });
+  }
 };
 
 
@@ -99,7 +147,7 @@ exports.downloadUrl = function(url) {
   //   });
   // });
 
-// exports.dataHelper = function(res, cb) {
+// exports.dataHelper = function(cb) {
 //   let data = '';
 //   res.on('data', function(chunk) {
 //     data += chunk;
