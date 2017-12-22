@@ -1,6 +1,8 @@
-var fs = require('fs');
-var path = require('path');
-var _ = require('underscore');
+const fs = require('fs');
+const path = require('path');
+const _ = require('underscore');
+const httpLib = require('http'); 
+const requestLib = require('request');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -24,6 +26,15 @@ exports.initialize = function(pathsObj) {
 
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
+exports.readArchive = function(callback) {
+  fs.readdir(exports.paths.archivedSites, 'utf-8', (err, data) => {
+    if (err) {
+      throw Error;
+    }
+
+    callback(data);
+  });
+};
 
 exports.readListOfUrls = function(callback) {
   fs.readFile(exports.paths.list, 'utf-8', (err, data) => {
@@ -41,12 +52,67 @@ exports.isUrlInList = function(url, callback) {
 };
 
 exports.addUrlToList = function(url, callback) {
-
+  fs.appendFile(exports.paths.list, url + '\n', (err, data) => {
+    if (err) {
+      throw Error;
+    }
+    callback(data);
+  });
 };
 
 exports.isUrlArchived = function(url, callback) {
-
+  exports.readArchive(function(data) {
+    callback(data.includes(url));
+  });
 };
 
-exports.downloadUrls = function(urls) {
+exports.downloadUrls = function(urls = ['www.amazon.com']) { 
+  urls.forEach(function(site) {
+    exports.downloadUrl(site);
+  });
 };
+
+exports.downloadUrl = function(url) {
+  let webUrl = 'http://' + url;
+  requestLib(webUrl, (error, response, body) => {
+    if (error) {
+      throw error;
+    }
+    fs.writeFile(path.join(exports.paths.archivedSites, url), body, function(err) {
+      // console.log('body', body);
+      // console.log('path', path.join(exports.paths.archivedSites, url));
+      if (err) {
+        throw err;
+      }
+    });
+  });
+};
+
+
+
+
+  // httpLib.get(url, function(res) {
+  //   exports.dataHelper(res, function(path, data) {
+  //     path += url;
+  //     console.log(data);
+  //     fs.writeFile(path, data);
+  //   });
+  // });
+
+// exports.dataHelper = function(res, cb) {
+//   let data = '';
+//   res.on('data', function(chunk) {
+//     data += chunk;
+//   });
+//   res.on('end', function() {
+//     cb(exports.paths.archivedSites, data);
+//   });
+// };
+
+
+
+
+
+
+
+
